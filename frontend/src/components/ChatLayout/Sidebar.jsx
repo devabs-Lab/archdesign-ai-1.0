@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Drawer,
   Box,
@@ -8,27 +7,31 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-  Divider,
   IconButton,
   TextField,
   InputAdornment,
   Avatar,
 } from "@mui/material";
-import hero from "../../assets/hero.png";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import LanguageIcon from "@mui/icons-material/Language";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import FolderIcon from "@mui/icons-material/Folder";
-import HistoryIcon from "@mui/icons-material/History";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CloseIcon from "@mui/icons-material/Close";
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 import { useAppContext } from "../../context/AppContext";
 
 export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
-  const { chats, setCurrentChatId, currentChatId, sidebarOpen, toggleSidebar } =
-    useAppContext();
+  const {
+    chats,
+    setCurrentChatId,
+    currentChatId,
+    sidebarOpen,
+    toggleSidebar,
+    activeSection,
+    setActiveSection,
+  } = useAppContext();
 
   const drawerContent = (
     <Box
@@ -53,13 +56,15 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
             sx={{
               width: 28,
               height: 28,
-              borderRadius: 1.5,
-              bgcolor: "primary.main",
+              borderRadius: 2,
+              background:
+                "linear-gradient(135deg, rgba(186,230,253,0.95), rgba(56,189,248,0.75))",
               mr: 1.5,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "primary.contrastText",
+              boxShadow: "0 12px 28px rgba(56, 189, 248, 0.32)",
             }}
           >
             <ArchitectureIcon sx={{ fontSize: 18 }} />
@@ -68,7 +73,7 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
             variant="h6"
             sx={{
               fontWeight: 700,
-              letterSpacing: "-0.5px",
+              letterSpacing: 0,
               color: "text.primary",
             }}
           >
@@ -90,6 +95,7 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
         <ListItemButton
           onClick={() => {
             setCurrentChatId(null);
+            setActiveSection("chat");
             if (isMobile) handleDrawerToggle();
           }}
           sx={{
@@ -97,16 +103,19 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
             border: (theme) =>
               theme.palette.mode === "light"
                 ? "1px solid rgba(0, 0, 0, 0.12)"
-                : "1px solid rgba(255, 255, 255, 0.12)",
+                : "1px solid rgba(224, 247, 255, 0.2)",
             color: "text.primary",
+            background:
+              "linear-gradient(135deg, rgba(224,247,255,0.16), rgba(56,189,248,0.08))",
+            backdropFilter: "blur(18px)",
             py: 0.75,
             px: 2,
             justifyContent: "center",
             "&:hover": {
               bgcolor: (theme) =>
                 theme.palette.mode === "light"
-                  ? "rgba(0, 0, 0, 0.04)"
-                  : "rgba(255, 255, 255, 0.04)",
+                ? "rgba(255,255,255,0.7)"
+                  : "rgba(186,230,253,0.12)",
             },
           }}
         >
@@ -137,14 +146,15 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
             fontSize: "0.8rem",
             bgcolor: (theme) =>
               theme.palette.mode === "light"
-                ? "rgba(0,0,0,0.03)"
-                : "rgba(255,255,255,0.03)",
+                ? "rgba(255,255,255,0.58)"
+                : "rgba(224,247,255,0.08)",
+            backdropFilter: "blur(18px)",
             border: "none",
             "& fieldset": {
               border: (theme) =>
                 theme.palette.mode === "light"
-                  ? "1px solid rgba(0,0,0,0.08)"
-                  : "1px solid rgba(255,255,255,0.08)",
+                  ? "1px solid rgba(56,189,248,0.2)"
+                  : "1px solid rgba(224,247,255,0.14)",
             },
             "&:hover fieldset": {
               borderColor: "primary.main",
@@ -167,22 +177,39 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
       {/* Main Navigation List */}
       <List sx={{ px: 0, pt: 0, mb: 2 }}>
         {[
-          { text: "Explore", icon: <LanguageIcon sx={{ fontSize: 16 }} /> },
-          { text: "Library", icon: <MenuBookIcon sx={{ fontSize: 16 }} /> },
-          { text: "Files", icon: <FolderIcon sx={{ fontSize: 16 }} /> },
+          { text: "Explore", value: "explore", icon: <LanguageIcon sx={{ fontSize: 16 }} /> },
+          { text: "Library", value: "library", icon: <MenuBookIcon sx={{ fontSize: 16 }} /> },
+          { text: "Files", value: "files", icon: <FolderIcon sx={{ fontSize: 16 }} /> },
         ].map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 0.25 }}>
             <ListItemButton
+              selected={activeSection === item.value}
+              onClick={() => {
+                setActiveSection(item.value);
+                if (isMobile) handleDrawerToggle();
+              }}
               sx={{
                 borderRadius: 2,
                 py: 0.5,
                 px: 1.5,
-                color: "text.secondary",
+                color: activeSection === item.value ? "text.primary" : "text.secondary",
+                bgcolor:
+                  activeSection === item.value
+                    ? (theme) =>
+                        theme.palette.mode === "light"
+                          ? "rgba(255,255,255,0.72)"
+                          : "rgba(186,230,253,0.12)"
+                    : "transparent",
+                border: "1px solid",
+                borderColor:
+                  activeSection === item.value
+                    ? "rgba(186,230,253,0.24)"
+                    : "transparent",
                 "&:hover": {
                   bgcolor: (theme) =>
                     theme.palette.mode === "light"
-                      ? "rgba(0, 0, 0, 0.03)"
-                      : "rgba(255, 255, 255, 0.03)",
+                      ? "rgba(255,255,255,0.64)"
+                      : "rgba(224,247,255,0.08)",
                   color: "text.primary",
                 },
               }}
@@ -240,6 +267,7 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
               selected={currentChatId === chat.id}
               onClick={() => {
                 setCurrentChatId(chat.id);
+                setActiveSection("chat");
                 if (isMobile) handleDrawerToggle();
               }}
               sx={{
@@ -252,17 +280,49 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
                     ? (theme) =>
                         theme.palette.mode === "light"
                           ? "rgba(0, 0, 0, 0.05)"
-                          : "rgba(255, 255, 255, 0.06)"
+                          : "rgba(186,230,253,0.1)"
                     : "transparent",
                 color: "text.primary",
                 "&:hover": {
                   bgcolor: (theme) =>
                     theme.palette.mode === "light"
                       ? "rgba(0, 0, 0, 0.03)"
-                      : "rgba(255, 255, 255, 0.03)",
+                      : "rgba(224,247,255,0.08)",
                 },
               }}
             >
+              <ListItemIcon sx={{ minWidth: 30, color: "inherit" }}>
+                <Box
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50% 50% 50% 8px",
+                    transform: "rotate(-8deg)",
+                    position: "relative",
+                    background:
+                      currentChatId === chat.id
+                        ? "rgba(244,247,251,0.95)"
+                        : "rgba(244,247,251,0.72)",
+                    boxShadow:
+                      currentChatId === chat.id
+                        ? "0 8px 18px rgba(186,230,253,0.18)"
+                        : "inset 0 1px 0 rgba(255,255,255,0.45)",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      width: 6,
+                      height: 6,
+                      left: 1,
+                      bottom: -1,
+                      bgcolor:
+                        currentChatId === chat.id
+                          ? "rgba(244,247,251,0.95)"
+                          : "rgba(244,247,251,0.72)",
+                      clipPath: "polygon(0 0, 100% 100%, 0 100%)",
+                    },
+                  }}
+                />
+              </ListItemIcon>
               <ListItemText
                 primary={chat.title || "New Conversation"}
                 primaryTypographyProps={{
@@ -332,9 +392,12 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
-            borderRight: "none",
             bgcolor: (theme) =>
-              theme.palette.mode === "light" ? "#f4f0ea" : "#1F1F1E",
+              theme.palette.mode === "light"
+                ? "rgba(255,255,255,0.5)"
+                : "rgba(8,22,38,0.46)",
+            backdropFilter: "blur(28px) saturate(150%)",
+            borderRight: "1px solid rgba(224,247,255,0.14)",
             transform: {
               xs: "none",
               sm: sidebarOpen ? "none" : "translateX(-280px)",

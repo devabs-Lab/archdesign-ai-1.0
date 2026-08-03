@@ -4,22 +4,25 @@ const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
-      main: "#0d9488", // Blueprint Teal
-      light: "#2dd4bf",
-      dark: "#0f766e",
+      main: "#38bdf8",
+      light: "#bae6fd",
+      dark: "#0284c7",
       contrastText: "#fff",
     },
     secondary: {
-      main: "#d97706", // Warm amber
+      main: "#67e8f9",
+      light: "#cffafe",
+      dark: "#0891b2",
     },
     background: {
-      default: mode === "light" ? "#fbfaf7" : "#1F1F1E", // Warm ivory vs sleek dark graphite #1F1F1E
-      paper: mode === "light" ? "#ffffff" : "#2C2C2A",  // White paper vs sleek dark input/sidebar #2C2C2A
+      default: mode === "light" ? "#eefaff" : "#07111f",
+      paper: mode === "light" ? "rgba(255,255,255,0.52)" : "rgba(8,22,38,0.42)",
     },
     text: {
-      primary: mode === "light" ? "#191919" : "#ecebe8", // Warm black vs warm ivory white
-      secondary: mode === "light" ? "#6b6a65" : "#aba8a2",
+      primary: mode === "light" ? "#111827" : "#f4f7fb",
+      secondary: mode === "light" ? "#5f6b7a" : "#aeb8c7",
     },
+    divider: mode === "light" ? "rgba(17,24,39,0.1)" : "rgba(255,255,255,0.1)",
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -32,7 +35,7 @@ const getDesignTokens = (mode) => ({
     button: { textTransform: "none", fontWeight: 500 },
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 14,
   },
   components: {
     MuiButton: {

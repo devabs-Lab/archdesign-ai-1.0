@@ -5,11 +5,15 @@ import yaml
 
 load_dotenv()
 
+
+
 # 🔥 Gemini LLM
 llm = LLM(
     model="gemini/gemini-2.5-flash-lite",
     api_key=os.getenv("GEMINI_API_KEY")
 )
+
+
 
 # ---------- Load YAML ----------
 def load_yaml(path):
@@ -18,6 +22,8 @@ def load_yaml(path):
 
 agents_config = load_yaml("src/ai_crew/config/agents.yaml")
 tasks_config = load_yaml("src/ai_crew/config/tasks.yaml")
+
+
 
 # ---------- Agents ----------
 analyst = Agent(

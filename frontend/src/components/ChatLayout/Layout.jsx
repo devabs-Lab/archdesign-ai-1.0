@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { useAppContext } from "../../context/AppContext";
@@ -20,6 +20,9 @@ export default function Layout({ children }) {
         height: "100vh",
         overflow: "hidden",
         bgcolor: "background.default",
+        background:
+          "radial-gradient(circle at 16% 18%, rgba(186,230,253,0.18), transparent 28%), radial-gradient(circle at 84% 22%, rgba(103,232,249,0.12), transparent 25%), linear-gradient(145deg, #06111f 0%, #0a1b2f 48%, #07111f 100%)",
+        p: 0,
       }}
     >
       {/* Sidebar container with smooth collapse transition */}
@@ -52,22 +55,23 @@ export default function Layout({ children }) {
             sm: sidebarOpen ? "calc(100% - 280px)" : "100%",
           },
           transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          p: 1, // Claude has no outer margin, it goes all the way to the top/sides!
+          p: 0,
           minHeight: 0,
-          bgcolor: "background.default",
+          bgcolor: "transparent",
         }}
       >
         <Box
+          className="glass-panel"
           sx={{
             flexGrow: 1,
             display: "flex",
             flexDirection: "column",
-            bgcolor:
-              theme.palette.mode === "light" ? "background.paper" : "#1F1F1E", // User wanted chat page background to be #1F1F1E
-            borderRadius: 0, // 100% full screen corners
+            bgcolor: "rgba(8, 22, 38, 0.42)",
+            borderRadius: 0,
             overflow: "hidden",
             position: "relative",
             minHeight: 0,
+            border: "1px solid rgba(224, 247, 255, 0.18)",
           }}
         >
           {children}

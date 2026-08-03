@@ -11,7 +11,12 @@ app = FastAPI(
 # Enable CORS for the React Frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://archdesign-ai-10-dev.vercel.app"], # In production, restrict this to the frontend URL
+    allow_origins=[
+        "https://archdesign-ai-10-dev.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173"
+    ], # Allow production frontend and local dev servers
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

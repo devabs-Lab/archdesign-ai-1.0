@@ -3,7 +3,7 @@ import { ChatService } from '../services/api';
 import { useAppContext } from '../context/AppContext';
 
 export const useChat = () => {
-    const { chats, setChats, currentChatId, setCurrentChatId } = useAppContext();
+    const { chats, setChats, currentChatId, setCurrentChatId, setActiveSection } = useAppContext();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -13,6 +13,7 @@ export const useChat = () => {
     const sendMessage = async (text) => {
         if (!text.trim()) return;
 
+        setActiveSection("chat");
         setLoading(true);
         setError(null);
 

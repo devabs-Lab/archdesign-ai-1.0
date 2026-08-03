@@ -3,22 +3,44 @@ from src.backend.schemas.design_schema import ChatMessage
 
 
 GREETING_WORDS = {
+    "ahlan",
+    "bonjour",
+    "good day",
     "hi",
+    "hi there",
+    "hiya",
     "hello",
+    "hello there",
+    "hey there",
     "hey",
+    "hey man",
+    "hey bro",
+    "hey buddy",
+    "howdy",
+    "hola",
+    "morning",
+    "evening",
     "good morning",
     "good afternoon",
     "good evening",
+    "greetings",
     "salam",
+    "selam",
     "sup",
+    "whatsapp",
+    "wassup",
+    "wazzup",
     "what up",
     "whats up",
     "what's up",
+    "yo",
+    "yo bro",
 }
 
 DESIGN_WORDS = {
     "architecture",
     "architect",
+    "architectural",
     "design",
     "database",
     "backend",
@@ -92,6 +114,8 @@ PREFERENCE_WORDS = {
 ANSWER_EARLIER_WORDS = {
     "answer what i said",
     "answer to what i said",
+    "answer my question",
+    "answer my question first",
     "first answer",
 }
 
@@ -101,6 +125,36 @@ CASUAL_WORDS = {
     "what's up",
     "sup",
     "yo",
+}
+
+CASUAL_TOPIC_WORDS = {
+    "coffee",
+    "tea",
+    "music",
+    "movies",
+    "food",
+    "sports",
+}
+
+CLARIFICATION_WORDS = {
+    "what do you mean",
+    "what you mean",
+    "explain",
+}
+
+GREETING_CORRECTION_WORDS = {
+    "means hi",
+    "i mean hi",
+    "it means hi",
+}
+
+WELLBEING_WORDS = {
+    "are you fine",
+    "are you okay",
+    "are you ok",
+    "how are you",
+    "how you doing",
+    "how are you doing",
 }
 
 SHORT_UNCLEAR_WORDS = {
@@ -167,7 +221,34 @@ def _has_design_context(history: list[ChatMessage]) -> bool:
 
 
 def _is_casual_message(text: str) -> bool:
-    return text in CASUAL_WORDS
+    return (
+        text in CASUAL_WORDS
+        or text in WELLBEING_WORDS
+        or "let's talk" in text
+        or "lets talk" in text
+        or "talk about" in text
+        or any(word in text for word in CASUAL_TOPIC_WORDS)
+    )
+
+
+def _is_greeting_message(text: str) -> bool:
+    if text in GREETING_WORDS or text in GREETING_CORRECTION_WORDS:
+        return True
+
+    words = text.split()
+    greeting_starts = {
+        "hi",
+        "hello",
+        "hey",
+        "salam",
+        "selam",
+        "yo",
+        "hola",
+        "bonjour",
+        "howdy",
+        "greetings",
+    }
+    return len(words) <= 4 and words[0] in greeting_starts
 
 
 def _is_short_unclear_message(text: str) -> bool:
@@ -175,6 +256,9 @@ def _is_short_unclear_message(text: str) -> bool:
 
 
 def _general_response(text: str, history: list[ChatMessage]) -> str:
+    if text in WELLBEING_WORDS:
+        return "I'm doing well, thanks for asking. How are you?"
+
     if "school" in text:
         return "Are you saying you have school today, or are you asking if you have school today?"
 
@@ -194,6 +278,57 @@ def _general_response(text: str, history: list[ChatMessage]) -> str:
         return "Tell me what you mean and I’ll answer directly."
 
     return "What would you like to talk about?"
+
+
+def _latest_user_question(history: list[ChatMessage]) -> str | None:
+    for message in reversed(history):
+        content = message.content.strip()
+        normalized = content.lower().rstrip("!.? ")
+        if message.role == "user" and (content.endswith("?") or normalized in WELLBEING_WORDS):
+            return content
+    return None
+
+
+def _direct_answer_to_question(question: str) -> str:
+    normalized = question.lower().strip().rstrip("!.? ")
+
+    if normalized in WELLBEING_WORDS:
+        return "I'm doing well, thanks for asking. How are you?"
+
+    if _is_capability_question(normalized):
+        return _capability_response()
+
+    return "You're right. Ask it again clearly and I'll answer it directly."
+
+
+def _casual_response(text: str) -> str:
+    normalized = text.lower().strip().rstrip("!.? ")
+
+    if normalized in WELLBEING_WORDS:
+        return "I'm doing well, thanks for asking. How are you?"
+
+    if "coffee" in normalized:
+        return "Sure, coffee is a good topic. Do you like strong coffee, sweet coffee, or something simple like a latte?"
+
+    if "tea" in normalized:
+        return "Sure, tea works too. Are we talking black tea, green tea, spiced tea, or just a chill cup?"
+
+    if "music" in normalized:
+        return "Sure, let's talk music. What kind of music do you usually listen to?"
+
+    if "movies" in normalized:
+        return "Sure, let's talk movies. Are you into action, comedy, drama, sci-fi, or something else?"
+
+    if "food" in normalized:
+        return "Sure, food is always a solid topic. What kind of food do you like?"
+
+    if "sports" in normalized:
+        return "Sure, let's talk sports. Which sport or team do you follow?"
+
+    if "let's talk" in normalized or "lets talk" in normalized or "talk about" in normalized:
+        return "Sure, let's talk. What topic do you want to start with?"
+
+    return "Not much. What's up?"
 
 
 def _is_contextual_follow_up(requirement: str) -> bool:
@@ -218,17 +353,17 @@ def _classify_message(requirement: str, history: list[ChatMessage] | None = None
     if _is_capability_question(normalized):
         return "capability"
 
-    if _is_casual_message(normalized):
-        return "casual"
-
-    if normalized in GREETING_WORDS or (
-        len(normalized.split()) <= 4
-        and any(normalized.startswith(word) for word in GREETING_WORDS)
-    ):
+    if _is_greeting_message(normalized):
         return "greeting"
+
+    if normalized in CLARIFICATION_WORDS:
+        return "clarification"
 
     if any(word in normalized for word in DESIGN_WORDS):
         return "design"
+
+    if _is_casual_message(normalized):
+        return "casual"
 
     if _has_design_context(history) and _is_contextual_follow_up(normalized):
         return "design"
@@ -266,6 +401,17 @@ Answer the latest user message using the conversation so far for context.
 """.strip()
 
 
+def _clean_model_output(output: str) -> str:
+    lines = []
+    for line in output.splitlines():
+        stripped = line.strip()
+        if stripped and set(stripped) <= {"*"}:
+            continue
+        lines.append(line.replace("*", ""))
+
+    return "\n".join(lines).strip()
+
+
 def generate_design_service(requirement: str, history: list[ChatMessage] | None = None) -> dict:
     try:
         history = history or []
@@ -278,10 +424,19 @@ def generate_design_service(requirement: str, history: list[ChatMessage] | None 
             return {"message": "Hi! How can I help you with your system design today?"}
 
         if message_type == "casual":
-            return {"message": "Not much. What's up?"}
+            return {"message": _casual_response(requirement)}
 
         if message_type == "unclear":
             return {"message": "Can you clarify what you mean?"}
+
+        if message_type == "clarification":
+            return {
+                "message": (
+                    "I meant that I needed a little more detail to answer well. "
+                    "For example, you can ask me about system architecture, API design, "
+                    "databases, scaling, deployment, or frontend/backend structure."
+                )
+            }
 
         if message_type == "empty":
             return {"message": "Please send a requirement or question, and I will help from there."}
@@ -299,6 +454,10 @@ def generate_design_service(requirement: str, history: list[ChatMessage] | None 
                     )
                 }
 
+            previous_question = _latest_user_question(history)
+            if previous_question and _asks_to_answer_earlier(requirement.lower()):
+                return {"message": _direct_answer_to_question(previous_question)}
+
             return {
                 "message": (
                     "Understood. No repeated greetings. Replies will stay direct and focused "
@@ -307,9 +466,14 @@ def generate_design_service(requirement: str, history: list[ChatMessage] | None 
             }
 
         if message_type == "general":
-            return {"message": _general_response(requirement.lower().strip().rstrip("!.? "), history)}
+            return {
+                "message": (
+                    "I'm mainly built to help with software and system design. Ask me about "
+                    "architecture, APIs, databases, scaling, deployment, or backend/frontend design."
+                )
+            }
 
         result = run_crew(_build_contextual_requirement(requirement, history))
-        return {"message": str(result)}
+        return {"message": _clean_model_output(str(result))}
     except Exception as e:
         return {"error": str(e)}

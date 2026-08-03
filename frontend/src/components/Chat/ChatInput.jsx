@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -13,7 +13,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
-import MicIcon from "@mui/icons-material/Mic";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 export default function ChatInput({ onSendMessage, disabled }) {
   const [input, setInput] = useState("");
@@ -32,30 +32,33 @@ export default function ChatInput({ onSendMessage, disabled }) {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", px: 2 }}>
+    <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", px: { xs: 0.75, sm: 1 } }}>
       <Paper
         elevation={0}
         sx={{
           p: 1.2,
-          borderRadius: "20px",
-          bgcolor: (theme) =>
-            theme.palette.mode === "light" ? "#fcfbfa" : "#2C2C2A",
+          borderRadius: "22px",
+          bgcolor: "rgba(224, 247, 255, 0.1)",
+          backdropFilter: "blur(24px) saturate(150%)",
           border: (theme) =>
             theme.palette.mode === "light"
-              ? "1px solid #e8e6e1"
-              : "1px solid rgba(255,255,255,0.05)",
+              ? "1px solid rgba(56,189,248,0.2)"
+              : "1px solid rgba(224,247,255,0.18)",
           mb: 1,
+          boxShadow:
+            "0 24px 60px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.18)",
           transition: "all 0.2s",
           "&:focus-within": {
             borderColor: "primary.main",
-            boxShadow: "0 0 0 1px rgba(13, 148, 136, 0.2)",
+            boxShadow:
+              "0 28px 72px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.24)",
           },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1, mb: 0.5 }}>
           <TextField
             fullWidth
-            placeholder="Ask anything"
+            placeholder="Ask for an architecture, API plan, database design..."
             multiline
             maxRows={3}
             value={input}
@@ -94,20 +97,24 @@ export default function ChatInput({ onSendMessage, disabled }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               borderRadius: "50%",
-              bgcolor: input.trim() ? "primary.main" : "primary.light",
+              background: input.trim()
+                ? "linear-gradient(135deg, #38bdf8, #67e8f9)"
+                : "rgba(186,230,253,0.28)",
               color: "#fff",
               mb: 0.25,
+              boxShadow: input.trim()
+                ? "0 14px 30px rgba(56,189,248,0.3)"
+                : "none",
               transition: "all 0.2s",
               "&:hover": {
-                bgcolor: input.trim() ? "primary.dark" : "primary.light",
                 transform: "scale(1.05)",
               },
             }}
           >
-            <MicIcon sx={{ fontSize: 22 }} />
+            <ArrowUpwardIcon sx={{ fontSize: 20 }} />
           </Box>
         </Box>
 
@@ -134,12 +141,12 @@ export default function ChatInput({ onSendMessage, disabled }) {
                 fontSize: "0.5rem",
                 borderColor: "primary.light",
                 color: "primary.main",
-                bgcolor: "rgba(13, 148, 136, 0.04)",
+                bgcolor: "rgba(186,230,253,0.1)",
                 px: 1.2,
                 py: 0,
                 fontWeight: 500,
                 "&:hover": {
-                  bgcolor: "rgba(13, 148, 136, 0.12)",
+                  bgcolor: "rgba(186,230,253,0.16)",
                   borderColor: "primary.main",
                 },
               }}
@@ -207,15 +214,15 @@ export default function ChatInput({ onSendMessage, disabled }) {
             color: "text.secondary",
             borderColor: (theme) =>
               theme.palette.mode === "light"
-                ? "#e8e6e1"
-                : "rgba(255,255,255,0.1)",
+                ? "rgba(56,189,248,0.18)"
+                : "rgba(224,247,255,0.14)",
             px: 1.5,
             py: 0,
             "&:hover": {
               bgcolor: (theme) =>
                 theme.palette.mode === "light"
-                  ? "rgba(0,0,0,0.02)"
-                  : "rgba(255,255,255,0.05)",
+                  ? "rgba(56,189,248,0.08)"
+                  : "rgba(224,247,255,0.08)",
               borderColor: "text.secondary",
             },
           }}

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useMemo } from "react";
+import { createContext, useState, useContext, useMemo } from "react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { createAppTheme } from "../theme";
 
@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chats, setChats] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
+  const [activeSection, setActiveSection] = useState("chat");
 
   const toggleColorMode = () => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
@@ -29,6 +30,8 @@ export const AppProvider = ({ children }) => {
     setChats,
     currentChatId,
     setCurrentChatId,
+    activeSection,
+    setActiveSection,
   };
 
   return (
