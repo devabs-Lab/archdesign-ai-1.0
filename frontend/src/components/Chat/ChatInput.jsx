@@ -32,7 +32,9 @@ export default function ChatInput({ onSendMessage, disabled }) {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", px: { xs: 0.75, sm: 1 } }}>
+    <Box
+      sx={{ width: "100%", maxWidth: 800, mx: "auto", px: { xs: 0.75, sm: 1 } }}
+    >
       <Paper
         elevation={0}
         sx={{

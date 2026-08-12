@@ -299,26 +299,24 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, isMobile }) {
                     borderRadius: "50% 50% 50% 8px",
                     transform: "rotate(-8deg)",
                     position: "relative",
-                    background:
-                      currentChatId === chat.id
-                        ? "rgba(244,247,251,0.95)"
-                        : "rgba(244,247,251,0.72)",
+                    background: "transparent",
+                    border: "2px solid rgba(255, 255, 255, 0.9)",
                     boxShadow:
                       currentChatId === chat.id
-                        ? "0 8px 18px rgba(186,230,253,0.18)"
-                        : "inset 0 1px 0 rgba(255,255,255,0.45)",
+                        ? "0 0 0 1px rgba(255,255,255,0.12)"
+                        : "none",
                     "&::after": {
                       content: '""',
                       position: "absolute",
-                      width: 6,
-                      height: 6,
-                      left: 1,
-                      bottom: -1,
-                      bgcolor:
-                        currentChatId === chat.id
-                          ? "rgba(244,247,251,0.95)"
-                          : "rgba(244,247,251,0.72)",
-                      clipPath: "polygon(0 0, 100% 100%, 0 100%)",
+                      width: 7,
+                      height: 7,
+                      left: 2,
+                      bottom: -5,
+                      background: "transparent",
+                      borderLeft: "2px solid rgba(255, 255, 255, 0.9)",
+                      borderBottom: "2px solid rgba(255, 255, 255, 0.9)",
+                      transform: "rotate(-45deg)",
+                      borderRadius: "0 0 0 2px",
                     },
                   }}
                 />

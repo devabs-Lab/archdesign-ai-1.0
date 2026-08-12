@@ -344,6 +344,9 @@ def _classify_message(requirement: str, history: list[ChatMessage] | None = None
     if not normalized:
         return "empty"
 
+    if normalized.startswith(("what is ", "what are ", "what's ")):
+        return "general"
+
     if _is_frustrated_message(normalized):
         return "general"
 
@@ -359,11 +362,11 @@ def _classify_message(requirement: str, history: list[ChatMessage] | None = None
     if normalized in CLARIFICATION_WORDS:
         return "clarification"
 
-    if any(word in normalized for word in DESIGN_WORDS):
-        return "design"
-
     if _is_casual_message(normalized):
         return "casual"
+
+    if any(word in normalized for word in DESIGN_WORDS):
+        return "design"
 
     if _has_design_context(history) and _is_contextual_follow_up(normalized):
         return "design"
